@@ -19,7 +19,7 @@ services:
       RABBITMQ_DEFAULT_PASS: "swda"
 
   mongodb:
-    image: cr.gitlab.switch.ch/hslu/shared/devops/docker-cache/bitnami/mongodb:4.2.19
+    image: bitnami/mongodb:4.2.19
     restart: always
     ports:
       - '27017:27017'
@@ -27,11 +27,11 @@ services:
       - backbone
 
   mongo-viewer:
-    image: cr.gitlab.switch.ch/hslu/shared/devops/docker-cache/mongo-express:0.54
+    image: mongo-express:0.54
     restart: always
     ports:
       - "8084:8081"
     networks:
       - backbone
-    links:
-      - "mongodb:mongo"
+    depends_on:
+      - mongodb
