@@ -32,10 +32,15 @@ public class OrderReceiverTest {
 
     @Test
     public void testOnMessageReceived() {
+        MockitoAnnotations.openMocks(this);
+        orderReceiver = new OrderReceiver(exchangeName, bus);
+
         String route = "testRoute";
         String replyTo = "testReplyTo";
         String corrId = "testCorrId";
-        String message = "{\"order\": {\"id\": \"testId\", \"entries\": [{\"articleId\": \"1\", \"amount\": 2}]}}";
+        String message = "{\"order\": {\"branchOfficeId\": {\"$oid\": \"000000000000000000000000\"}, \"sellerId\": {\"$oid\": \"000000000000000000000000\"}, \"customer\": {\"id\": {\"$oid\": \"000000000000000000000000\"}, \"name\": \"\", \"preName\": \"\", \"street\": \"\", \"zip\": \"\", \"city\": \"\"}, \"datetime\": null, \"status\": null, \"entries\": [{\"articleId\": {\"$oid\": \"000000000000000000000000\"}, \"articleName\": \"\", \"amount\": 0, \"pricePerUnit\": 0}]}}";
+
+        String asdf = "{\"order\": {\"branchOfficeId\": 0, \"sellerId\": 0, \"customer\": {\"id\": 0, \"name\": \"\", \"preName\": \"\", \"street\": \"\", \"zip\": \"\", \"city\": \"\"}, \"entries\": [{\"articleId\": 0, \"articleName\": \"\", \"amount\": 0, \"pricePerUnit\": 0}]}}";
         String test = "{\n" +
                 "  \"branchOfficeId\": 0,\n" +
                 "  \"sellerId\": 0,\n" +
@@ -57,37 +62,12 @@ public class OrderReceiverTest {
                 "  ]\n" +
                 "}\n";
 
-        orderReceiver.onMessageReceived(route, replyTo, corrId, test);
+        orderReceiver.onMessageReceived(route, replyTo, corrId, message);
 
         // Verify that debug message is logged correctly
         verify(logService).debug("received message of type: {}", route);
 
-        /*
-        // Verify that the order is processed and inserted into the database
-        ArgumentCaptor<Order> orderCaptor = ArgumentCaptor.forClass(Order.class);
-        verify(databaseMock).getCollection(eq("orderCollectionName"), eq(Order.class));
-        verify(collectionMock).insertOne(orderCaptor.capture());
-        Order insertedOrder = orderCaptor.getValue();
-        assertEquals("testId", insertedOrder.getId());
-
-        // Verify that log service is called with correct message
-        verify(logService).info(eq("Order created with id %s"), eq("testId"));
-
-        // Verify that bus is called with correct parameters
-        verify(bus).talkAsync(eq("exchangeName"), eq(Routes.ORDER_CREATED), anyString());
-
-        // Verify that the correct message is sent through the bus
-        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
-        verify(bus).talkAsync(anyString(), anyString(), messageCaptor.capture());
-        Gson gson = new Gson();
-        OrderCreatedMessage orderCreatedMessage = gson.fromJson(messageCaptor.getValue(), OrderCreatedMessage.class);
-        assertEquals("testId", orderCreatedMessage.getOrderId());
-        assertEquals(1, orderCreatedMessage.getEntries().size());
-        assertEquals("1", orderCreatedMessage.getEntries().get(0).getArticleId());
-        assertEquals(2, orderCreatedMessage.getEntries().get(0).getAmount());
-
-        // Optionally, verify that the confirmation email is sent (mock the email service for this)
-        // verify(emailService).sendConfirmationEmail(anyString(), anyString());
-         */
+        // NOTE: wird niemals funktionieren, wenn der MongoClient innerhalb der Methode erstellt wird
+        // Der Client müsste gemockt und in die Methode mitgegeben werden können, um zu testen
     }
 }
