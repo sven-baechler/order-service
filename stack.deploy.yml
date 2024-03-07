@@ -1,0 +1,59 @@
+version: '3.5'
+
+networks:
+  ingress:
+    name: traefik-public
+    external: true
+  bus:
+    name: bus
+    external: true
+  mongodb_order_service:
+    name: mongodb_order_service
+    external: false
+
+services:
+
+  app:
+    image: $CICD_IMAGE_ID
+    environment:
+      - RMQ_HOST=bus
+      - MONGO_HOST=mongodb
+      - MONGO_USER=root
+      - MONGO_PW=root
+    networks:
+      - bus
+      - mongodb_order_service
+    deploy:
+      replicas: 1
+#      labels:
+#        - "traefik.http.routers.${CICD_STACK_NAME}App.rule=Host(`${CI_PROJECT_NAME}.${TLD}`)"
+#        - "traefik.http.services.${CICD_STACK_NAME}App.loadbalancer.server.port=8080"
+#        - 'traefik.http.routers.${CICD_STACK_NAME}App.entrypoints=websecure'
+#        - 'traefik.http.routers.${CICD_STACK_NAME}App.tls.certresolver=letsencrypt'
+
+  mongodb:
+    image: mongo:4.2.5
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: 'root'
+      MONGO_INITDB_ROOT_PASSWORD: 'root'
+    networks:
+      - mongodb_order_service
+
+  mongodb-viewer:
+    image: mongo-express:1.0.0
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+      ME_CONFIG_BASICAUTH_USERNAME: swda
+      ME_CONFIG_BASICAUTH_PASSWORD: swda
+      ME_CONFIG_MONGODB_SERVER: mongodb
+    networks:
+      - mongodb_order_service
+      - ingress
+    deploy:
+      replicas: 1
+      labels:
+        - "traefik.http.routers.${CICD_STACK_NAME}App.rule=Host(`db.${CI_PROJECT_NAME}.${TLD}`)"
+        - "traefik.http.services.${CICD_STACK_NAME}App.loadbalancer.server.port=8081"
+        - 'traefik.http.routers.${CICD_STACK_NAME}App.entrypoints=websecure'
+        - 'traefik.http.routers.${CICD_STACK_NAME}App.tls.certresolver=letsencrypt'
