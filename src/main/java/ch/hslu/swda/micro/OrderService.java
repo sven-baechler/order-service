@@ -2,6 +2,7 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
+import ch.hslu.swda.services.OrderCreateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

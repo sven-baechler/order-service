@@ -10,6 +10,8 @@ import ch.hslu.swda.logging.LogService;
 import ch.hslu.swda.messages.OrderCreatedMessage;
 import ch.hslu.swda.messages.OrderReceivedMessage;
 import ch.hslu.swda.mongo.MongoConfig;
+import ch.hslu.swda.mongo.MongoService;
+import ch.hslu.swda.services.OrderCreateService;
 import com.google.gson.Gson;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
@@ -34,11 +36,15 @@ public class OrderReceiver implements MessageReceiver {
     private final String exchangeName;
     private final BusConnector bus;
     private final LogService logService;
+    private final MongoService mongoService;
+    private final OrderCreateService orderCreateService;
 
     public OrderReceiver(final String exchangeName, final BusConnector bus) {
         this.exchangeName = exchangeName;
         this.bus = bus;
         this.logService = new LogService(exchangeName, bus, LOG);
+        this.mongoService = new MongoService(logService);
+        this.orderCreateService = new OrderCreateService(mongoService, logService);
     }
 
     /**
@@ -50,36 +56,10 @@ public class OrderReceiver implements MessageReceiver {
 
         Gson gson = new Gson();
         OrderReceivedMessage orderReceivedMessage = gson.fromJson(message, OrderReceivedMessage.class);
+        Order order = orderReceivedMessage.getOrder();
 
-        var order = orderReceivedMessage.getOrder();
-        order.setId(new ObjectId());
-        order.setStatus(OrderStatus.ORDERED);
-        for (OrderEntry orderEntry : order.getEntries()) {
-            orderEntry.setStatus(OrderStatus.ORDERED);
-        }
+        OrderCreatedMessage orderCreatedMessage = orderCreateService.CreateOrder(order);
 
-        MongoConfig config = new MongoConfig();
-        String connectionString = config.getConnectionString();
-
-        CodecRegistry pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
-                fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-
-        try (MongoClient client = MongoClients.create(connectionString)) {
-            MongoDatabase database = client.getDatabase(config.getDatabaseName()).withCodecRegistry(pojoCodecRegistry);
-            MongoCollection<Order> collection = database.getCollection(config.getOrderCollectionName(), Order.class);
-
-            collection.insertOne(order);
-        }
-
-        List<OrderCreatedMessageOrderEntry> orderCreatedMessageOrderEntries = new ArrayList<>();
-        for (OrderEntry orderEntry : order.getEntries()) {
-            orderCreatedMessageOrderEntries.add(new OrderCreatedMessageOrderEntry(orderEntry.getArticleId().toString(), orderEntry.getAmount()));
-        }
-
-        this.logService.info("Order created with id %s", order.getId().toHexString()).send();
-        OrderCreatedMessage orderCreatedMessage = new OrderCreatedMessage(order.getId().toString(), orderCreatedMessageOrderEntries);
-
-        // TODO: send confirmation email to user
 
         try {
             this.bus.talkAsync(this.exchangeName, Routes.ORDER_CREATED, gson.toJson(orderCreatedMessage));

@@ -53,7 +53,6 @@ public class MongoConfig {
         return this.properties.getProperty("orderCollection");
     }
 
-
     public String getConnectionString() {
         String user = System.getenv(USER_ENV);
         String pw = System.getenv(PW_ENV);

@@ -22,8 +22,6 @@ import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 public class OrderEntryService {
-
-
     private static Logger LOG;
     private final LogService logService;
 
