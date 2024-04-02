@@ -8,7 +8,6 @@ public class OrderEntryUpdatedMessage {
     private String orderId;
     private String articleId;
 
-    // TODO fix passing the status in the message
     private OrderStatus status = OrderStatus.READY_TO_DELIVER;
 
     public void setStatus(OrderStatus status) {

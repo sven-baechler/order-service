@@ -16,6 +16,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
@@ -51,7 +52,6 @@ public class MongoService {
             MongoCollection<Order> collection = this.getCollection(client, config.getOrderCollectionName(), Order.class);
 
             Bson filter = Filters.eq("_id", orderId);
-
             Order order = collection.find(filter).first();
 
             if (order == null) {
@@ -59,21 +59,25 @@ public class MongoService {
                 return false;
             }
 
-            for (OrderEntry orderEntry : order.getEntries()) {
-                if (orderEntry.getArticleId().equals(articleId)) {
-                    orderEntry.setStatus(status);
-                }
-                // TODO: log error and return false if no order entry with articleId in order
+            Optional<OrderEntry> matchingEntry = order.getEntries().stream()
+                    .filter(entry -> entry.getArticleId().equals(articleId))
+                    .findFirst();
+
+            if (matchingEntry.isPresent()) {
+                matchingEntry.get().setStatus(status);
+
+                collection.findOneAndReplace(filter, order);
+
+                this.logService.info(
+                        "Updated status of order entry from order %s with article id %s to %s",
+                        orderId.toString(), articleId.toString(), status.toString()
+                ).send();
+
+                return true;
+            } else {
+                this.logService.error(String.format("could not find article with id %s in order with id %s", articleId.toString(), orderId.toString()));
+                return false;
             }
-
-            collection.findOneAndReplace(filter, order);
-
-            this.logService.info(
-                    "Updated status of order entry from order %s with article id %s to %s",
-                    orderId.toString(), articleId.toString(), status.toString()
-            ).send();
-
-            return true;
         }
         catch (Exception ex) {
             this.logService.error("Error while updating status of order entry from order %s with article id %s to %s",
