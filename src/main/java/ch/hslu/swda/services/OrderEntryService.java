@@ -23,7 +23,9 @@ public class OrderEntryService {
         ObjectId articleId = new ObjectId(orderEntryUpdatedMessage.getArticleId());
         OrderStatus status = orderEntryUpdatedMessage.getStatus();
 
-        this.mongoService.updateOrderEntryStatus(orderId, articleId, status);
-        this.mongoService.updateOrderStatus(orderId);
+        boolean orderEntryUpdated = this.mongoService.updateOrderEntryStatus(orderId, articleId, status);
+        if (orderEntryUpdated) {
+            this.mongoService.updateOrderStatus(orderId);
+        }
     }
 }
