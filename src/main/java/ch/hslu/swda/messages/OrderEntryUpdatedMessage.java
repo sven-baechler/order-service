@@ -1,7 +1,6 @@
 package ch.hslu.swda.messages;
 
 import ch.hslu.swda.entities.OrderStatus;
-import com.google.gson.Gson;
 
 public class OrderEntryUpdatedMessage {
 
@@ -12,6 +11,14 @@ public class OrderEntryUpdatedMessage {
 
     public void setStatus(OrderStatus status) {
         this.status = status;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
+    public void setArticleId(String articleId) {
+        this.articleId = articleId;
     }
 
     public String getOrderId() {
