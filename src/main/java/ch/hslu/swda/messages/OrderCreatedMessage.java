@@ -1,8 +1,6 @@
 package ch.hslu.swda.messages;
 
 import ch.hslu.swda.dto.OrderCreatedMessageOrderEntry;
-import ch.hslu.swda.entities.Order;
-import org.bson.types.ObjectId;
 
 import java.util.Collections;
 import java.util.List;
