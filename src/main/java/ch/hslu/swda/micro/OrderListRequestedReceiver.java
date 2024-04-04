@@ -40,7 +40,7 @@ public final class OrderListRequestedReceiver implements MessageReceiver {
         this.bus = bus;
         this.logService = new LogService(exchangeName, bus, LOG);
         this.mongoService = new MongoService(logService);
-        this.orderListService = new GetOrderListService(mongoService, logService);
+        this.orderListService = new GetOrderListService(mongoService);
     }
 
     /**

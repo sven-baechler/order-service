@@ -1,8 +1,6 @@
 package ch.hslu.swda.services;
 
 import ch.hslu.swda.entities.Order;
-import ch.hslu.swda.logging.LogService;
-import ch.hslu.swda.micro.OrderListRequestedReceiver;
 import ch.hslu.swda.mongo.MongoService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -10,23 +8,16 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import org.bson.types.ObjectId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class GetOrderListService {
-
-    private static final Logger LOG = LoggerFactory.getLogger(OrderListRequestedReceiver.class);
     private final MongoService mongoService;
-    private final LogService logService;
 
-    public GetOrderListService(final MongoService mongoService, final LogService logService) {
+    public GetOrderListService(final MongoService mongoService) {
         this.mongoService = mongoService;
-        this.logService = logService;
-
     }
 
     public String getJsonOrderList() {
