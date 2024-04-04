@@ -24,7 +24,7 @@ public class ArticleStockRequiredService {
 
     }
     public AssortmentUpdatedMessage CheckArticleStockRequired(ArticleStockUpdateRequiredMessage articleStockUpdateRequiredMessage) {
-        ObjectId articleId = new ObjectId(articleStockUpdateRequiredMessage.getArticleId());
+        ObjectId articleId = new ObjectId(articleStockUpdateRequiredMessage.articleId());
         List<Order> orders = mongoService.findOrdersByArticleIdAndStatus(articleId, OrderStatus.ORDERED);
 
         orders.sort(Comparator.comparing(Order::getDatetime));
@@ -41,13 +41,13 @@ public class ArticleStockRequiredService {
         }
 
         AssortmentUpdatedMessage assortmentUpdatedMessage = new AssortmentUpdatedMessage(
-                articleStockUpdateRequiredMessage.getArticleId(),
-                (int) articleStockUpdateRequiredMessage.getAmount(),
+                articleStockUpdateRequiredMessage.articleId(),
+                (int) articleStockUpdateRequiredMessage.amount(),
                 entries
         );
         this.logService.info(
                 "Reorder with %s items of %s received. %s entries may be processed now",
-                articleStockUpdateRequiredMessage.getAmount(), articleStockUpdateRequiredMessage.getArticleId(), entries.size()
+                articleStockUpdateRequiredMessage.amount(), articleStockUpdateRequiredMessage.articleId(), entries.size()
         ).send();
 
         return assortmentUpdatedMessage;
