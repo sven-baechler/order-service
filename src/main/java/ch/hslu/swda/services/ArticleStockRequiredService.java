@@ -23,7 +23,7 @@ public class ArticleStockRequiredService {
         this.logService = logService;
 
     }
-    public AssortmentUpdatedMessage CheckArticleStockRequired(ArticleStockUpdateRequiredMessage articleStockUpdateRequiredMessage) {
+    public AssortmentUpdatedMessage checkArticleStockRequired(ArticleStockUpdateRequiredMessage articleStockUpdateRequiredMessage) {
         ObjectId articleId = new ObjectId(articleStockUpdateRequiredMessage.articleId());
         List<Order> orders = mongoService.findOrdersByArticleIdAndStatus(articleId, OrderStatus.ORDERED);
 
