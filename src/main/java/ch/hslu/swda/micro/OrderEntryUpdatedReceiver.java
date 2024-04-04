@@ -13,16 +13,12 @@ import org.slf4j.LoggerFactory;
 
 public class OrderEntryUpdatedReceiver implements MessageReceiver {
     private static final Logger LOG = LoggerFactory.getLogger(OrderEntryUpdatedReceiver.class);
-    private final String exchangeName;
-    private final BusConnector bus;
     private final LogService logService;
     private final MongoService mongoService;
 
     private final OrderEntryService orderEntryService;
 
     public OrderEntryUpdatedReceiver(final String exchangeName, final BusConnector bus) {
-        this.exchangeName = exchangeName;
-        this.bus = bus;
         this.logService = new LogService(exchangeName, bus, LOG);
         this.mongoService = new MongoService(logService);
         this.orderEntryService = new OrderEntryService(LOG, this.logService, this.mongoService);
