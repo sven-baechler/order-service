@@ -24,13 +24,17 @@ public class LogService {
     }
 
     public Log info(String format, Object... arguments) {
-        this.logger.info(String.format(format, arguments));
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info(String.format(format, arguments));
+        }
 
         return this.log(Level.INFO, format, arguments);
     }
 
     public Log error(String format, Object... arguments) {
-        this.logger.error(String.format(format, arguments));
+        if (this.logger.isErrorEnabled()) {
+            this.logger.error(String.format(format, arguments));
+        }
 
         return this.log(Level.ERROR, format, arguments);
     }
