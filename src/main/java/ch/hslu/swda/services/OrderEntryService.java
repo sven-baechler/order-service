@@ -12,12 +12,10 @@ import org.slf4j.Logger;
 import java.util.Optional;
 
 public class OrderEntryService {
-    private static Logger LOG;
     private final LogService logService;
     private final MongoService mongoService;
 
-    public OrderEntryService(final Logger log, final LogService logService, final MongoService mongoService) {
-        LOG = log;
+    public OrderEntryService(final LogService logService, final MongoService mongoService) {
         this.logService = logService;
         this.mongoService = mongoService;
     }
@@ -29,10 +27,8 @@ public class OrderEntryService {
 
         Order order = this.mongoService.getOrder(orderId);
 
-        if (order != null) {
-            if (this.updateOrderEntryStatus(order, articleId, status)) {
-                this.updateOrderStatus(order);
-            }
+        if (order != null && this.updateOrderEntryStatus(order, articleId, status)) {
+            this.updateOrderStatus(order);
         }
     }
 

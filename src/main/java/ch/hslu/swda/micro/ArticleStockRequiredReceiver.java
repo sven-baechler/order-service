@@ -28,7 +28,7 @@ public class ArticleStockRequiredReceiver implements MessageReceiver {
         this.exchangeName = exchangeName;
         this.bus = bus;
         this.logService = new LogService(exchangeName, bus, LOG);
-        this.orderEntryService = new OrderEntryService(LOG, this.logService, new MongoService(logService));
+        this.orderEntryService = new OrderEntryService(this.logService, new MongoService(logService));
         this.articleStockRequiredService = new ArticleStockRequiredService(new MongoService(logService), logService);
     }
 
