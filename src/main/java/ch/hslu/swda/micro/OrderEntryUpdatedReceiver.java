@@ -21,7 +21,7 @@ public class OrderEntryUpdatedReceiver implements MessageReceiver {
     public OrderEntryUpdatedReceiver(final String exchangeName, final BusConnector bus) {
         this.logService = new LogService(exchangeName, bus, LOG);
         this.mongoService = new MongoService(logService);
-        this.orderEntryService = new OrderEntryService(LOG, this.logService, this.mongoService);
+        this.orderEntryService = new OrderEntryService(this.logService, this.mongoService);
     }
 
     @Override
