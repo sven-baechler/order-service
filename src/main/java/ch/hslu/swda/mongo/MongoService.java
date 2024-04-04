@@ -1,7 +1,6 @@
 package ch.hslu.swda.mongo;
 
 import ch.hslu.swda.entities.Order;
-import ch.hslu.swda.entities.OrderEntry;
 import ch.hslu.swda.entities.OrderStatus;
 import ch.hslu.swda.logging.LogService;
 import com.mongodb.MongoClientSettings;
@@ -16,7 +15,6 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
@@ -47,71 +45,33 @@ public class MongoService {
         }
     }
 
-    public boolean updateOrderEntryStatus(ObjectId orderId, ObjectId articleId, OrderStatus status) {
+    public Order getOrder(ObjectId orderId) {
         try (MongoClient client = this.getMongoClient()) {
             MongoCollection<Order> collection = this.getCollection(client, config.getOrderCollectionName(), Order.class);
-
-            Bson filter = Filters.eq("_id", orderId);
-            Order order = collection.find(filter).first();
+            Order order = collection.find(filterByOrderId(orderId)).first();
 
             if (order == null) {
-                this.logService.error(String.format("could not find order with id %s", orderId.toString()));
-                return false;
+                this.logService.info(String.format("could not find order with id %s", orderId.toString()));
+                return null;
             }
 
-            Optional<OrderEntry> matchingEntry = order.getEntries().stream()
-                    .filter(entry -> entry.getArticleId().equals(articleId))
-                    .findFirst();
-
-            if (matchingEntry.isPresent()) {
-                matchingEntry.get().setStatus(status);
-
-                collection.findOneAndReplace(filter, order);
-
-                this.logService.info(
-                        "Updated status of order entry from order %s with article id %s to %s",
-                        orderId.toString(), articleId.toString(), status.toString()
-                ).send();
-
-                return true;
-            } else {
-                this.logService.error(String.format("could not find article with id %s in order with id %s", articleId.toString(), orderId.toString()));
-                return false;
-            }
+            return order;
         }
         catch (Exception ex) {
-            this.logService.error("Error while updating status of order entry from order %s with article id %s to %s",
-                    orderId.toString(), articleId.toString(), status.toString()
-            ).send();
-            return false;
+            this.logService.error("Error while get order with id %s", orderId.toString()).send();
+            return null;
         }
     }
 
-    public boolean updateOrderStatus(ObjectId orderId) {
+    public boolean updateOrder(Order order) {
         try (MongoClient client = this.getMongoClient()) {
             MongoCollection<Order> collection = this.getCollection(client, config.getOrderCollectionName(), Order.class);
-
-            Bson filter = Filters.eq("_id", orderId);
-
-            Order order = collection.find(filter).first();
-
-            if (order == null) {
-                this.logService.error(String.format("could not find order with id %s", orderId.toString()));
-                return false;
-            }
-
-            if (order.getEntries().stream().allMatch(oe -> oe.getStatus() == OrderStatus.READY_TO_DELIVER)) {
-                order.setStatus(OrderStatus.READY_TO_DELIVER);
-                collection.findOneAndReplace(filter, order);
-                this.logService.info(
-                        "All order entries from order %s are ready to deliver, order status changed to ready to deliver", orderId.toString()
-                ).send();
-            }
-
+            collection.findOneAndReplace(filterByOrderId(order.getId()), order);
+            this.logService.info("updated order with id %s", order.getId().toString()).send();
             return true;
         }
         catch (Exception ex) {
-            this.logService.error("Error while updating status of order with id %s", orderId.toString()).send();
+            this.logService.error("Error while updating order with id %s", order.getId().toString()).send();
             return false;
         }
     }
@@ -154,5 +114,9 @@ public class MongoService {
     private <T> MongoCollection<T> getCollection(MongoClient client, String collectionName, Class<T> clazz) {
         MongoDatabase database = client.getDatabase(this.config.getDatabaseName()).withCodecRegistry(this.pojoCodecRegistry);
         return database.getCollection(collectionName, clazz);
+    }
+
+    private Bson filterByOrderId(ObjectId orderId) {
+        return Filters.eq("_id", orderId);
     }
 }
