@@ -28,8 +28,6 @@ public final class Application {
 
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
 
-    private static OrderService service;
-
     /**
      * Privater Konstruktor.
      */
@@ -44,9 +42,17 @@ public final class Application {
     public static void main(final String[] args) throws InterruptedException, IOException, TimeoutException {
         final long startTime = System.currentTimeMillis();
         LOG.info("Service starting...");
-        service = new OrderService();
-        LOG.atInfo().addArgument(System.currentTimeMillis() - startTime).log("Service started in {}ms.");
+        try (OrderService service = new OrderService()) {
+            LOG.atInfo().addArgument(System.currentTimeMillis() - startTime).log("Service started in {}ms.");
 
-        Thread.sleep(100_000_000);
+            Thread.sleep(100_000_000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOG.error("Main thread interrupted", e);
+        } catch (Exception e) {
+            LOG.error("Error starting the OrderService", e);
+        }
+
+
     }
 }
