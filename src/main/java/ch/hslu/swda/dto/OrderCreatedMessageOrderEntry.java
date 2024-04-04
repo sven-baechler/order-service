@@ -1,7 +1,5 @@
 package ch.hslu.swda.dto;
 
-import org.bson.types.ObjectId;
-
 public class OrderCreatedMessageOrderEntry {
 
     private final String articleId;
