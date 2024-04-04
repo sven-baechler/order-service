@@ -76,7 +76,7 @@ public class MongoService {
         }
     }
 
-    public ArrayList<Order> findAllOrders() {
+    public List<Order> findAllOrders() {
         ArrayList<Order> orders = new ArrayList<>();
 
         try (MongoClient client = this.getMongoClient()) {

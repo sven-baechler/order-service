@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class GetOrderListService {
@@ -29,16 +30,16 @@ public class GetOrderListService {
     }
 
     public String getJsonOrderList() {
-        ArrayList<Order> orderList = this.getOrderList();
+        List<Order> orderList = this.getOrderList();
 
         return this.convertOrdersToJson(orderList);
     }
 
-    private ArrayList<Order> getOrderList() {
+    private List<Order> getOrderList() {
         return this.mongoService.findAllOrders();
     }
 
-    private String convertOrdersToJson(ArrayList<Order> orderList) {
+    private String convertOrdersToJson(List<Order> orderList) {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(
                         ObjectId.class,
