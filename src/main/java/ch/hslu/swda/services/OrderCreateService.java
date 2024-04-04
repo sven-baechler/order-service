@@ -16,7 +16,7 @@ public class OrderCreateService {
     public OrderCreateService(final MongoService mongoService) {
         this.mongoService = mongoService;
     }
-    public OrderCreatedMessage CreateOrder(Order order) {
+    public OrderCreatedMessage createOrder(Order order) {
         order.setId(new ObjectId());
         order.setStatus(OrderStatus.ORDERED);
         for (OrderEntry orderEntry : order.getEntries()) {

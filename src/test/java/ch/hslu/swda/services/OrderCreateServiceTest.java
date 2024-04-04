@@ -49,7 +49,7 @@ class OrderCreateServiceTest {
 
         order.setEntries(Arrays.asList(entry1, entry2));
 
-        OrderCreatedMessage result = orderCreateService.CreateOrder(order);
+        OrderCreatedMessage result = orderCreateService.createOrder(order);
 
         assertNotNull(result);
         assertEquals(2, result.getEntries().size());
@@ -65,7 +65,7 @@ class OrderCreateServiceTest {
         entry.setStatus(OrderStatus.ORDERED);
         order.setEntries(List.of(entry));
 
-        orderCreateService.CreateOrder(order);
+        orderCreateService.createOrder(order);
 
         assertEquals(OrderStatus.ORDERED, order.getStatus());
         order.getEntries().forEach(
@@ -81,7 +81,7 @@ class OrderCreateServiceTest {
         entry.setAmount(5);
         order.setEntries(List.of(entry));
 
-        OrderCreatedMessage result = orderCreateService.CreateOrder(order);
+        OrderCreatedMessage result = orderCreateService.createOrder(order);
 
         assertNotNull(result.getOrderId());
         assertEquals(1, result.getEntries().size());
@@ -93,6 +93,6 @@ class OrderCreateServiceTest {
         doThrow(new RuntimeException("Database error")).when(mongoService).insertOrder(any(Order.class));
         Order order = new Order();
 
-        assertThrows(RuntimeException.class, () -> orderCreateService.CreateOrder(order));
+        assertThrows(RuntimeException.class, () -> orderCreateService.createOrder(order));
     }
 }

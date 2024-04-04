@@ -41,7 +41,7 @@ public class OrderReceiver implements MessageReceiver {
         OrderReceivedMessage orderReceivedMessage = gson.fromJson(message, OrderReceivedMessage.class);
         Order order = orderReceivedMessage.getOrder();
 
-        OrderCreatedMessage orderCreatedMessage = orderCreateService.CreateOrder(order);
+        OrderCreatedMessage orderCreatedMessage = orderCreateService.createOrder(order);
 
 
         try {
