@@ -32,12 +32,13 @@ public class ArticleStockRequiredService {
         for (Order order : orders) {
             long amount = 0;
             for (OrderEntry orderEntry : order.getEntries()) {
-                if (orderEntry.getArticleId().equals(articleId)) {
+                if (orderEntry.getArticleId().equals(articleId) && orderEntry.getStatus() == OrderStatus.ORDERED) {
                     amount += orderEntry.getAmount();
                 }
             }
-
-            entries.add(new OrdersAssortmentUpdateMessageOrderEntry(order.getId().toString(), amount));
+            if (amount != 0) {
+                entries.add(new OrdersAssortmentUpdateMessageOrderEntry(order.getId().toString(), amount));
+            }
         }
 
         AssortmentUpdatedMessage assortmentUpdatedMessage = new AssortmentUpdatedMessage(
