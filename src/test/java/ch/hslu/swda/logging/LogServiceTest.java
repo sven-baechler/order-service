@@ -28,6 +28,8 @@ class LogServiceTest {
     void testInfo() {
         String format = "This is an info message with a value provided %s";
         String argument = "input to insert";
+
+        when(logger.isInfoEnabled()).thenReturn(true);
         Log returnedLog = logService.info(format, argument);
 
         verify(logger).info(String.format(format, argument));
@@ -53,6 +55,8 @@ class LogServiceTest {
     void testError() {
         String format = "Error message %s";
         String argument = "error input";
+
+        when(logger.isErrorEnabled()).thenReturn(true);
         Log returnedLog = logService.error(format, argument);
 
         verify(logger).error(String.format(format, argument));
