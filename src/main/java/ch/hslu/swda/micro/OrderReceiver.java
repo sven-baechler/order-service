@@ -35,14 +35,13 @@ public class OrderReceiver implements MessageReceiver {
      */
     @Override
     public void onMessageReceived(final String route, final String replyTo, final String corrId, final String message) {
-        LOG.debug("received message of type: {}", route);
+        logService.info("received message of type: {}", route);
 
         Gson gson = new Gson();
         OrderReceivedMessage orderReceivedMessage = gson.fromJson(message, OrderReceivedMessage.class);
         Order order = orderReceivedMessage.getOrder();
 
         OrderCreatedMessage orderCreatedMessage = orderCreateService.createOrder(order);
-
 
         try {
             this.bus.talkAsync(this.exchangeName, Routes.ORDER_CREATED, gson.toJson(orderCreatedMessage));
