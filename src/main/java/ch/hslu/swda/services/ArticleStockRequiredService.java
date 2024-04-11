@@ -13,6 +13,7 @@ import org.bson.types.ObjectId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ArticleStockRequiredService {
     private final MongoService mongoService;
@@ -29,17 +30,15 @@ public class ArticleStockRequiredService {
 
         orders.sort(Comparator.comparing(Order::getDatetime));
         List<OrdersAssortmentUpdateMessageOrderEntry> entries = new ArrayList<>();
-        for (Order order : orders) {
-            long amount = 0;
-            for (OrderEntry orderEntry : order.getEntries()) {
-                if (orderEntry.getArticleId().equals(articleId) && orderEntry.getStatus() == OrderStatus.ORDERED) {
-                    amount += orderEntry.getAmount();
-                }
-            }
-            if (amount != 0) {
-                entries.add(new OrdersAssortmentUpdateMessageOrderEntry(order.getId().toString(), amount));
-            }
-        }
+
+        orders.stream()
+                .flatMap(order -> order.getEntries().stream()
+                        .filter(orderEntry -> orderEntry.getArticleId().equals(articleId) && orderEntry.getStatus() == OrderStatus.ORDERED)
+                        .collect(Collectors.groupingBy(orderEntry -> order.getId().toString(), Collectors.summingLong(OrderEntry::getAmount)))
+                        .entrySet().stream()
+                        .filter(entry -> entry.getValue() != 0)
+                        .map(entry -> new OrdersAssortmentUpdateMessageOrderEntry(entry.getKey(), entry.getValue())))
+                .forEach(entries::add);
 
         AssortmentUpdatedMessage assortmentUpdatedMessage = new AssortmentUpdatedMessage(
                 articleStockUpdateRequiredMessage.articleId(),

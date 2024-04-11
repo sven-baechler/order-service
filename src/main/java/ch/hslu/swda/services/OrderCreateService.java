@@ -10,6 +10,7 @@ import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrderCreateService {
     private final MongoService mongoService;
@@ -25,10 +26,9 @@ public class OrderCreateService {
 
         mongoService.insertOrder(order);
 
-        List<OrderCreatedMessageOrderEntry> orderCreatedMessageOrderEntries = new ArrayList<>();
-        for (OrderEntry orderEntry : order.getEntries()) {
-            orderCreatedMessageOrderEntries.add(new OrderCreatedMessageOrderEntry(orderEntry.getArticleId().toString(), orderEntry.getAmount()));
-        }
+        List<OrderCreatedMessageOrderEntry> orderCreatedMessageOrderEntries = order.getEntries().stream()
+                .map(orderEntry -> new OrderCreatedMessageOrderEntry(orderEntry.getArticleId().toString(), orderEntry.getAmount()))
+                .collect(Collectors.toList());
 
         return new OrderCreatedMessage(order.getId().toString(), orderCreatedMessageOrderEntries);
     }
