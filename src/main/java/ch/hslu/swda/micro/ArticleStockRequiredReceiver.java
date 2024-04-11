@@ -46,6 +46,10 @@ public class ArticleStockRequiredReceiver implements MessageReceiver {
                 for (OrderEntryUpdatedMessage orderEntryUpdatedMessage : assortmentUpdatedReply.getOrderEntryUpdatedMessages()) {
                     this.orderEntryService.handleOrderEntryUpdated(orderEntryUpdatedMessage);
                 }
+
+                // TODO-sven: so machen?
+                assortmentUpdatedReply.getOrderEntryUpdatedMessages().stream()
+                        .forEach(orderEntryUpdatedMessage -> orderEntryService.handleOrderEntryUpdated(orderEntryUpdatedMessage));
             }
         } catch (IOException | InterruptedException e) {
             LOG.error(e.getMessage(), e);

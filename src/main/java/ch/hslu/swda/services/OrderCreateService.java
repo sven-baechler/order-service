@@ -24,6 +24,9 @@ public class OrderCreateService {
             orderEntry.setStatus(OrderStatus.ORDERED);
         }
 
+        // TODO-sven: so machen?
+        order.getEntries().stream().forEach(orderEntry -> orderEntry.setStatus(OrderStatus.ORDERED));
+
         mongoService.insertOrder(order);
 
         List<OrderCreatedMessageOrderEntry> orderCreatedMessageOrderEntries = order.getEntries().stream()
