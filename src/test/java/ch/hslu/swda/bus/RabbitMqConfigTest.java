@@ -16,8 +16,6 @@
 package ch.hslu.swda.bus;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -27,34 +25,33 @@ final class RabbitMqConfigTest {
 
     /**
      * Test method for {@link ch.hslu.swda.bus.RabbitMqConfig#getHost()}.
-     *//*
+     */
     @Test
     void testGetHost() {
         assertThat(new RabbitMqConfig("rabbitmq.test.properties").getHost()).isEqualTo("1111");
     }
 
-    *//**
+    /**
      * Test method for {@link ch.hslu.swda.bus.RabbitMqConfig#getUsername()}.
-     *//*
+     */
     @Test
     void testGetUsername() {
         assertThat(new RabbitMqConfig("rabbitmq.test.properties").getUsername()).isEqualTo("2222");
     }
 
-    *//**
+    /**
      * Test method for {@link ch.hslu.swda.bus.RabbitMqConfig#getPassword()}.
-     *//*
+     */
     @Test
     void testGetPassword() {
         assertThat(new RabbitMqConfig("rabbitmq.test.properties").getPassword()).isEqualTo("3333");
     }
 
-    *//**
+    /**
      * Test method for {@link ch.hslu.swda.bus.RabbitMqConfig#getExchange()}.
-     *//*
+     */
     @Test
     void testGetExchange() {
         assertThat(new RabbitMqConfig("rabbitmq.test.properties").getExchange()).isEqualTo("4444");
-    }*/
-
+    }
 }
