@@ -18,6 +18,7 @@ package ch.hslu.swda.micro;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
+import ch.hslu.swda.services.ReceiverFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,7 @@ public final class Application {
     public static void main(final String[] args) throws InterruptedException, IOException, TimeoutException {
         final long startTime = System.currentTimeMillis();
         LOG.info("Service starting...");
-        try (OrderService service = new OrderService()) {
+        try (OrderService orderService = new OrderService(new ReceiverFactory())) {
             LOG.atInfo().addArgument(System.currentTimeMillis() - startTime).log("Service started in {}ms.");
 
             Thread.sleep(100_000_000);

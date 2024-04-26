@@ -7,28 +7,22 @@ import ch.hslu.swda.services.logging.LogService;
 import ch.hslu.swda.messages.OrderCreatedMessage;
 import ch.hslu.swda.messages.OrderReceivedMessage;
 import ch.hslu.swda.micro.Routes;
-import ch.hslu.swda.services.mongo.MongoService;
 import ch.hslu.swda.services.OrderCreateService;
 import com.google.gson.Gson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class OrderReceiver implements MessageReceiver {
-    private static final Logger LOG = LoggerFactory.getLogger(OrderReceiver.class);
     private final String exchangeName;
     private final BusConnector bus;
     private final LogService logService;
-    private final MongoService mongoService;
     private final OrderCreateService orderCreateService;
 
-    public OrderReceiver(final String exchangeName, final BusConnector bus) {
+    public OrderReceiver(final String exchangeName, final BusConnector bus, final LogService logService, final OrderCreateService orderCreateService) {
         this.exchangeName = exchangeName;
         this.bus = bus;
-        this.logService = new LogService(exchangeName, bus, LOG);
-        this.mongoService = new MongoService(logService);
-        this.orderCreateService = new OrderCreateService(mongoService);
+        this.logService = logService;
+        this.orderCreateService = orderCreateService;
     }
 
     /**
