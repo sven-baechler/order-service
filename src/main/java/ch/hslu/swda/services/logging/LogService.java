@@ -10,7 +10,6 @@ public class LogService {
     private final String exchangeName;
     private final BusConnector bus;
     private final Logger logger;
-
     private String correlationId;
 
     public LogService(String exchangeName, BusConnector bus, Logger logger) {

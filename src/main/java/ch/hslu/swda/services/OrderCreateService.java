@@ -6,6 +6,7 @@ import ch.hslu.swda.entities.OrderStatus;
 import ch.hslu.swda.messages.OrderCreatedMessage;
 import ch.hslu.swda.services.mongo.MongoService;
 import org.bson.types.ObjectId;
+
 import java.util.List;
 
 public class OrderCreateService {
@@ -16,7 +17,7 @@ public class OrderCreateService {
     public OrderCreatedMessage createOrder(Order order) {
         order.setId(new ObjectId());
         order.setStatus(OrderStatus.ORDERED);
-        order.getEntries().stream().forEach(orderEntry -> orderEntry.setStatus(OrderStatus.ORDERED));
+        order.getEntries().forEach(orderEntry -> orderEntry.setStatus(OrderStatus.ORDERED));
 
         mongoService.insertOrder(order);
 
