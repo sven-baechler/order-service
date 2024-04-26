@@ -1,8 +1,8 @@
-package ch.hslu.swda.mongo;
+package ch.hslu.swda.services.mongo;
 
 import ch.hslu.swda.entities.Order;
 import ch.hslu.swda.entities.OrderStatus;
-import ch.hslu.swda.logging.LogService;
+import ch.hslu.swda.services.logging.LogService;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;

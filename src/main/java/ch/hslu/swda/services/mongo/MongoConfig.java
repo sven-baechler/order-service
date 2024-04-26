@@ -1,4 +1,4 @@
-package ch.hslu.swda.mongo;
+package ch.hslu.swda.services.mongo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

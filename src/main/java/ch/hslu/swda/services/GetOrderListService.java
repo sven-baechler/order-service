@@ -1,7 +1,7 @@
 package ch.hslu.swda.services;
 
 import ch.hslu.swda.entities.Order;
-import ch.hslu.swda.mongo.MongoService;
+import ch.hslu.swda.services.mongo.MongoService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonPrimitive;

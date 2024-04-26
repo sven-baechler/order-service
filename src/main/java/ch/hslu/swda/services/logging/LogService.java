@@ -1,4 +1,4 @@
-package ch.hslu.swda.logging;
+package ch.hslu.swda.services.logging;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.messages.LogMessage;

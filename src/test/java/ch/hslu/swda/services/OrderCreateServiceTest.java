@@ -4,7 +4,7 @@ import ch.hslu.swda.entities.Order;
 import ch.hslu.swda.entities.OrderEntry;
 import ch.hslu.swda.entities.OrderStatus;
 import ch.hslu.swda.messages.OrderCreatedMessage;
-import ch.hslu.swda.mongo.MongoService;
+import ch.hslu.swda.services.mongo.MongoService;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
