@@ -23,13 +23,15 @@ public class ReceiverFactory {
     public MessageReceiver getReceiver(String receiver) {
         switch (receiver) {
             case "OrderReceiver":
-                LogService logService = getLogServiceByClass(OrderReceiver.class);
+                LogService logServiceOrderReceiver = getLogServiceByClass(OrderReceiver.class);
                 OrderCreateService orderCreateService = new OrderCreateService(getMongoService());
-                return new OrderReceiver(this.exchangeName, this.bus, logService, orderCreateService);
+                return new OrderReceiver(this.exchangeName, this.bus, logServiceOrderReceiver, orderCreateService);
             case "ArticleStockRequiredReceiver":
                 return new ArticleStockRequiredReceiver(this.exchangeName, this.bus);
             case "OrderEntryUpdatedReceiver":
-                return new OrderEntryUpdatedReceiver(this.exchangeName, this.bus);
+                LogService logServiceOrderEntryUpdatedReceiver = getLogServiceByClass(OrderEntryUpdatedReceiver.class);
+                OrderEntryService orderEntryService = new OrderEntryService(logServiceOrderEntryUpdatedReceiver, getMongoService());
+                return new OrderEntryUpdatedReceiver(logServiceOrderEntryUpdatedReceiver, orderEntryService);
             case "OrderListRequestedReceiver":
                 return new OrderListRequestedReceiver(this.exchangeName, this.bus);
             default:

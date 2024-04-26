@@ -9,7 +9,6 @@ import ch.hslu.swda.messages.OrderReceivedMessage;
 import ch.hslu.swda.micro.Routes;
 import ch.hslu.swda.services.OrderCreateService;
 import com.google.gson.Gson;
-
 import java.io.IOException;
 
 public class OrderReceiver implements MessageReceiver {
@@ -30,13 +29,13 @@ public class OrderReceiver implements MessageReceiver {
      */
     @Override
     public void onMessageReceived(final String route, final String replyTo, final String corrId, final String message) {
-        logService.info("received message of type: {}", route);
+        this.logService.info("received message of type: {}", route);
 
         Gson gson = new Gson();
         OrderReceivedMessage orderReceivedMessage = gson.fromJson(message, OrderReceivedMessage.class);
         Order order = orderReceivedMessage.getOrder();
 
-        OrderCreatedMessage orderCreatedMessage = orderCreateService.createOrder(order);
+        OrderCreatedMessage orderCreatedMessage = this.orderCreateService.createOrder(order);
 
         try {
             this.bus.talkAsync(this.exchangeName, Routes.ORDER_CREATED, gson.toJson(orderCreatedMessage));
