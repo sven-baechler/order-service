@@ -14,9 +14,9 @@ public class OrderEntryService {
     private final LogService logService;
     private final MongoService mongoService;
 
-    public OrderEntryService(final LogService logService, final MongoService mongoService) {
-        this.logService = logService;
+    public OrderEntryService(final MongoService mongoService, final LogService logService) {
         this.mongoService = mongoService;
+        this.logService = logService;
     }
 
     public void handleOrderEntryUpdated(OrderEntryUpdatedMessage orderEntryUpdatedMessage) {

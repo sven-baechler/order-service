@@ -17,8 +17,6 @@ package ch.hslu.swda.receivers;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
-import ch.hslu.swda.services.logging.LogService;
-import ch.hslu.swda.services.mongo.MongoService;
 import ch.hslu.swda.services.GetOrderListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,16 +29,12 @@ public final class OrderListRequestedReceiver implements MessageReceiver {
 
     private final String exchangeName;
     private final BusConnector bus;
-    private final LogService logService;
-    private final MongoService mongoService;
     private final GetOrderListService orderListService;
 
-    public OrderListRequestedReceiver(final String exchangeName, final BusConnector bus) {
+    public OrderListRequestedReceiver(final String exchangeName, final BusConnector bus, final GetOrderListService getOrderListService) {
         this.exchangeName = exchangeName;
         this.bus = bus;
-        this.logService = new LogService(exchangeName, bus, LOG);
-        this.mongoService = new MongoService(logService);
-        this.orderListService = new GetOrderListService(mongoService);
+        this.orderListService = getOrderListService;
     }
 
     /**

@@ -21,22 +21,30 @@ public class ReceiverFactory {
     }
 
     public MessageReceiver getReceiver(String receiver) {
-        switch (receiver) {
-            case "OrderReceiver":
-                LogService logServiceOrderReceiver = getLogServiceByClass(OrderReceiver.class);
-                OrderCreateService orderCreateService = new OrderCreateService(getMongoService());
-                return new OrderReceiver(this.exchangeName, this.bus, logServiceOrderReceiver, orderCreateService);
-            case "ArticleStockRequiredReceiver":
-                return new ArticleStockRequiredReceiver(this.exchangeName, this.bus);
-            case "OrderEntryUpdatedReceiver":
-                LogService logServiceOrderEntryUpdatedReceiver = getLogServiceByClass(OrderEntryUpdatedReceiver.class);
-                OrderEntryService orderEntryService = new OrderEntryService(logServiceOrderEntryUpdatedReceiver, getMongoService());
-                return new OrderEntryUpdatedReceiver(logServiceOrderEntryUpdatedReceiver, orderEntryService);
-            case "OrderListRequestedReceiver":
-                return new OrderListRequestedReceiver(this.exchangeName, this.bus);
-            default:
-                return null;
-        }
+        return switch (receiver) {
+            case "OrderReceiver" -> new OrderReceiver(
+                    this.exchangeName,
+                    this.bus,
+                    getLogServiceByClass(OrderReceiver.class),
+                    new OrderCreateService(getMongoService())
+            );
+            case "ArticleStockRequiredReceiver" -> new ArticleStockRequiredReceiver(
+                    this.exchangeName,
+                    this.bus,
+                    new OrderEntryService(getMongoService(), getLogServiceByClass(OrderEntryService.class)),
+                    new ArticleStockRequiredService(getMongoService(), getLogServiceByClass(ArticleStockRequiredService.class))
+            );
+            case "OrderEntryUpdatedReceiver" -> new OrderEntryUpdatedReceiver(
+                    getLogServiceByClass(OrderEntryUpdatedReceiver.class),
+                    new OrderEntryService(getMongoService(), getLogServiceByClass(OrderEntryService.class))
+            );
+            case "OrderListRequestedReceiver" -> new OrderListRequestedReceiver(
+                    this.exchangeName,
+                    this.bus,
+                    new GetOrderListService(getMongoService())
+            );
+            default -> null;
+        };
     }
 
     public BusConnector getBus() {
