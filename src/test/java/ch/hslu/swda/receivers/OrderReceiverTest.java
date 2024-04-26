@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class OrderReceiverTest {
+class OrderReceiverTest {
     @Mock
     private BusConnector bus;
 
@@ -37,7 +37,7 @@ public class OrderReceiverTest {
     }
 
     @Test
-    public void testOnMessageReceived() {
+    void testOnMessageReceived() {
         // Arrange
         String route = "testRoute";
         String replyTo = "testReplyTo";
@@ -54,8 +54,6 @@ public class OrderReceiverTest {
         String expectedMessage = new Gson().toJson(orderCreatedMessage);
 
         verify(this.logService).info("received message of type: {}", route);
-        assertDoesNotThrow(() -> {
-            verify(this.bus).talkAsync(null, Routes.ORDER_CREATED, expectedMessage);
-        });
+        assertDoesNotThrow(() -> verify(this.bus).talkAsync(null, Routes.ORDER_CREATED, expectedMessage));
     }
 }

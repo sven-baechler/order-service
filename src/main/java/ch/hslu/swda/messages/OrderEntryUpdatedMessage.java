@@ -2,6 +2,8 @@ package ch.hslu.swda.messages;
 
 import ch.hslu.swda.entities.OrderStatus;
 
+import java.util.Objects;
+
 public class OrderEntryUpdatedMessage {
 
     private String orderId;
@@ -31,5 +33,20 @@ public class OrderEntryUpdatedMessage {
 
     public OrderStatus getStatus() {
         return status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrderEntryUpdatedMessage that = (OrderEntryUpdatedMessage) o;
+        return Objects.equals(orderId, that.orderId) &&
+                Objects.equals(articleId, that.articleId) &&
+                status == that.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(orderId, articleId, status);
     }
 }
