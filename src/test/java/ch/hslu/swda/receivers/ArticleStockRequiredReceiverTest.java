@@ -21,7 +21,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.*;
 
-public class ArticleStockRequiredReceiverTest {
+class ArticleStockRequiredReceiverTest {
 
     @Mock
     private BusConnector bus;
