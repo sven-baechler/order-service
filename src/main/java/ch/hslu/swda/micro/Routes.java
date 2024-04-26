@@ -20,15 +20,15 @@ package ch.hslu.swda.micro;
  */
 public final class Routes {
 
-    static final String ORDER_RECEIVED = "order.received";
+    public static final String ORDER_RECEIVED = "order.received";
 
-    static final String ORDER_CREATED = "order.created";
+    public static final String ORDER_CREATED = "order.created";
 
-    static final String ORDER_ENTRY_UPDATED = "order_entry.updated";
+    public static final String ORDER_ENTRY_UPDATED = "order_entry.updated";
 
-    static final String ORDERS_ASSORTMENT_UPDATED = "orders.assortment_updated";
+    public static final String ORDERS_ASSORTMENT_UPDATED = "orders.assortment_updated";
 
-    static final String ARTICLE_STOCK_UPDATE_REQUIRED = "article.stock_update_required";
+    public static final String ARTICLE_STOCK_UPDATE_REQUIRED = "article.stock_update_required";
 
     public static final String LOG_OCCURRED = "log.occurred";
 

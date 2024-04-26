@@ -1,13 +1,14 @@
-package ch.hslu.swda.micro;
+package ch.hslu.swda.receivers;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
-import ch.hslu.swda.logging.LogService;
+import ch.hslu.swda.services.logging.LogService;
 import ch.hslu.swda.messages.ArticleStockUpdateRequiredMessage;
 import ch.hslu.swda.messages.AssortmentUpdatedMessage;
 import ch.hslu.swda.messages.AssortmentUpdatedReply;
 import ch.hslu.swda.messages.OrderEntryUpdatedMessage;
-import ch.hslu.swda.mongo.MongoService;
+import ch.hslu.swda.micro.Routes;
+import ch.hslu.swda.services.mongo.MongoService;
 import ch.hslu.swda.services.ArticleStockRequiredService;
 import ch.hslu.swda.services.OrderEntryService;
 import com.google.gson.Gson;

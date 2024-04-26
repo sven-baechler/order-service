@@ -2,6 +2,8 @@ package ch.hslu.swda.logging;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.micro.Routes;
+import ch.hslu.swda.services.logging.Log;
+import ch.hslu.swda.services.logging.LogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

@@ -1,17 +1,13 @@
 package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
-import ch.hslu.swda.entities.Order;
-import ch.hslu.swda.messages.OrderCreatedMessage;
-import com.google.gson.Gson;
+import ch.hslu.swda.receivers.OrderReceiver;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 
 public class OrderReceiverTest {
