@@ -5,7 +5,6 @@ import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.messages.ArticleStockUpdateRequiredMessage;
 import ch.hslu.swda.messages.AssortmentUpdatedMessage;
 import ch.hslu.swda.messages.AssortmentUpdatedReply;
-import ch.hslu.swda.messages.OrderEntryUpdatedMessage;
 import ch.hslu.swda.micro.Routes;
 import ch.hslu.swda.services.ArticleStockRequiredService;
 import ch.hslu.swda.services.OrderEntryService;
@@ -40,10 +39,6 @@ public class ArticleStockRequiredReceiver implements MessageReceiver {
             String reply = this.bus.talkSync(this.exchangeName, Routes.ORDERS_ASSORTMENT_UPDATED, gson.toJson(assortmentUpdatedMessage));
             if (reply != null) {
                 AssortmentUpdatedReply assortmentUpdatedReply = new Gson().fromJson(reply, AssortmentUpdatedReply.class);
-                for (OrderEntryUpdatedMessage orderEntryUpdatedMessage : assortmentUpdatedReply.getOrderEntryUpdatedMessages()) {
-                    this.orderEntryService.handleOrderEntryUpdated(orderEntryUpdatedMessage);
-                }
-
                 assortmentUpdatedReply.getOrderEntryUpdatedMessages().stream()
                         .forEach(orderEntryService::handleOrderEntryUpdated);
             }
