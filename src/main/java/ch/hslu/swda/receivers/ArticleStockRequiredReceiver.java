@@ -39,8 +39,7 @@ public class ArticleStockRequiredReceiver implements MessageReceiver {
             String reply = this.bus.talkSync(this.exchangeName, Routes.ORDERS_ASSORTMENT_UPDATED, gson.toJson(assortmentUpdatedMessage));
             if (reply != null) {
                 AssortmentUpdatedReply assortmentUpdatedReply = new Gson().fromJson(reply, AssortmentUpdatedReply.class);
-                assortmentUpdatedReply.getOrderEntryUpdatedMessages().stream()
-                        .forEach(orderEntryService::handleOrderEntryUpdated);
+                assortmentUpdatedReply.getOrderEntryUpdatedMessages().forEach(orderEntryService::handleOrderEntryUpdated);
             }
         } catch (IOException | InterruptedException e) {
             LOG.error(e.getMessage(), e);
