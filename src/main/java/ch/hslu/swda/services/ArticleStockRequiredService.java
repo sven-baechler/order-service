@@ -48,7 +48,7 @@ public class ArticleStockRequiredService {
         this.logService.info(
                 "Reorder with %s items of %s received. %s entries may be processed now",
                 articleStockUpdateRequiredMessage.amount(), articleStockUpdateRequiredMessage.articleId(), entries.size()
-        ).send();
+        );
 
         return assortmentUpdatedMessage;
     }

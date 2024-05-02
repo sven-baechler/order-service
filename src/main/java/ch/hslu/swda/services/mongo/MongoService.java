@@ -36,11 +36,11 @@ public class MongoService {
             MongoCollection<Order> collection = this.getCollection(client, config.getOrderCollectionName(), Order.class);
             collection.insertOne(order);
 
-            this.logService.info("Order saved to DB with id %s", order.getId().toHexString()).send();
+            this.logService.info("Order saved to DB with id %s", order.getId().toHexString());
             return true;
         }
         catch (Exception ex) {
-            this.logService.info("Could not save order to DB with id %s", order.getId().toHexString()).send();
+            this.logService.error("Could not save order to DB with id %s", order.getId().toHexString());
             return false;
         }
     }
@@ -51,14 +51,14 @@ public class MongoService {
             Order order = collection.find(filterByOrderId(orderId)).first();
 
             if (order == null) {
-                this.logService.info(String.format("could not find order with id %s", orderId.toString()));
+                this.logService.info("could not find order with id %s", orderId.toString());
                 return null;
             }
 
             return order;
         }
         catch (Exception ex) {
-            this.logService.error("Error while get order with id %s", orderId.toString()).send();
+            this.logService.error("Error while get order with id %s", orderId.toString());
             return null;
         }
     }
@@ -67,11 +67,11 @@ public class MongoService {
         try (MongoClient client = this.getMongoClient()) {
             MongoCollection<Order> collection = this.getCollection(client, config.getOrderCollectionName(), Order.class);
             collection.findOneAndReplace(filterByOrderId(order.getId()), order);
-            this.logService.info("updated order with id %s", order.getId().toString()).send();
+            this.logService.info("updated order with id %s", order.getId().toString());
             return true;
         }
         catch (Exception ex) {
-            this.logService.error("Error while updating order with id %s", order.getId().toString()).send();
+            this.logService.error("Error while updating order with id %s", order.getId().toString());
             return false;
         }
     }
@@ -85,7 +85,7 @@ public class MongoService {
             orders = collection.find().into(new ArrayList<>());
         }
         catch (Exception ex) {
-            this.logService.info("Error fetching all orders").send();
+            this.logService.error("Error fetching all orders");
         }
 
         return orders;
@@ -101,7 +101,7 @@ public class MongoService {
             orders = collection.find(filter).into(new ArrayList<>());
         }
         catch (Exception ex) {
-            this.logService.info("Error fetching orders for article ID %s and status %s", articleId.toHexString(), status).send();
+            this.logService.info("Error fetching orders for article ID %s and status %s", articleId.toHexString(), status);
         }
 
         return orders;

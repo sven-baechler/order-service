@@ -2,14 +2,12 @@ package ch.hslu.swda.logging;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.micro.Routes;
-import ch.hslu.swda.services.logging.Log;
 import ch.hslu.swda.services.logging.LogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 class LogServiceTest {
@@ -32,13 +30,9 @@ class LogServiceTest {
         String argument = "input to insert";
 
         when(logger.isInfoEnabled()).thenReturn(true);
-        Log returnedLog = logService.info(format, argument);
+        logService.info(format, argument);
 
         verify(logger).info(String.format(format, argument));
-        verifyNoInteractions(bus);
-        assertNotNull(returnedLog);
-
-        returnedLog.send();
 
         assertDoesNotThrow(() -> verify(bus).talkAsync(
                 eq("exchangeName"),
@@ -59,13 +53,9 @@ class LogServiceTest {
         String argument = "error input";
 
         when(logger.isErrorEnabled()).thenReturn(true);
-        Log returnedLog = logService.error(format, argument);
+        logService.error(format, argument);
 
         verify(logger).error(String.format(format, argument));
-        verifyNoInteractions(bus);
-        assertNotNull(returnedLog);
-
-        returnedLog.send();
 
         assertDoesNotThrow(() -> verify(bus).talkAsync(
                 eq("exchangeName"),

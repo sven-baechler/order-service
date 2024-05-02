@@ -49,11 +49,11 @@ public class OrderEntryService {
             order.setStatus(OrderStatus.READY_TO_DELIVER);
 
             if (this.mongoService.updateOrder(order)) {
-                this.logService.info("All order entries from order %s are ready to deliver, order status changed to ready to deliver", order.getId().toString()).send();
+                this.logService.info("All order entries from order %s are ready to deliver, order status changed to ready to deliver", order.getId().toString());
             }
         }
         else {
-            this.logService.info("Not all order entries from order %s are ready to deliver yet, order status stays the same", order.getId().toString()).send();
+            this.logService.info("Not all order entries from order %s are ready to deliver yet, order status stays the same", order.getId().toString());
         }
     }
 }

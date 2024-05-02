@@ -3,7 +3,6 @@ package ch.hslu.swda.services;
 import ch.hslu.swda.entities.Order;
 import ch.hslu.swda.entities.OrderEntry;
 import ch.hslu.swda.entities.OrderStatus;
-import ch.hslu.swda.services.logging.Log;
 import ch.hslu.swda.services.logging.LogService;
 import ch.hslu.swda.messages.ArticleStockUpdateRequiredMessage;
 import ch.hslu.swda.messages.AssortmentUpdatedMessage;
@@ -19,10 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.doNothing;
 
 class ArticleStockRequiredServiceTest {
     final private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -32,9 +28,6 @@ class ArticleStockRequiredServiceTest {
 
     @Mock
     private LogService logService;
-
-    @Mock
-    private Log log;
 
     @InjectMocks
     private ArticleStockRequiredService service;
@@ -91,8 +84,6 @@ class ArticleStockRequiredServiceTest {
         when(mongoService.findOrdersByArticleIdAndStatus(articleId, OrderStatus.ORDERED))
                 .thenReturn(Arrays.asList(order, secondOrder));
 
-        this.mockLogService();
-
         // act
         AssortmentUpdatedMessage result = service.checkArticleStockRequired(message);
 
@@ -111,8 +102,6 @@ class ArticleStockRequiredServiceTest {
 
         when(mongoService.findOrdersByArticleIdAndStatus(articleId, OrderStatus.ORDERED))
                 .thenReturn(Collections.emptyList());
-
-        this.mockLogService();
 
         // act
         AssortmentUpdatedMessage result = service.checkArticleStockRequired(message);
@@ -168,8 +157,6 @@ class ArticleStockRequiredServiceTest {
 
         when(mongoService.findOrdersByArticleIdAndStatus(articleId, OrderStatus.ORDERED))
                 .thenReturn(Arrays.asList(order, secondOrder));
-
-        this.mockLogService();
 
         // act
         AssortmentUpdatedMessage result = service.checkArticleStockRequired(message);
@@ -227,8 +214,6 @@ class ArticleStockRequiredServiceTest {
         when(mongoService.findOrdersByArticleIdAndStatus(articleId, OrderStatus.ORDERED))
                 .thenReturn(Arrays.asList(order, secondOrder));
 
-        this.mockLogService();
-
         // act
         AssortmentUpdatedMessage result = service.checkArticleStockRequired(message);
 
@@ -237,10 +222,5 @@ class ArticleStockRequiredServiceTest {
         assertEquals(2, result.entries().size());
         assertEquals(21, result.entries().get(0).getAmount());
         assertEquals(6, result.entries().get(1).getAmount());
-    }
-
-    private void mockLogService() {
-        doReturn(this.log).when(logService).info(anyString(), any());
-        doNothing().when(this.log).send();
     }
 }

@@ -3,7 +3,6 @@ package ch.hslu.swda.services;
 import ch.hslu.swda.entities.Order;
 import ch.hslu.swda.entities.OrderEntry;
 import ch.hslu.swda.entities.OrderStatus;
-import ch.hslu.swda.services.logging.Log;
 import ch.hslu.swda.services.logging.LogService;
 import ch.hslu.swda.messages.OrderEntryUpdatedMessage;
 import ch.hslu.swda.services.mongo.MongoService;
@@ -15,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -25,9 +25,6 @@ class OrderEntryServiceTest {
 
     @Mock
     private LogService logService;
-
-    @Mock
-    private Log log;
 
     @InjectMocks
     private OrderEntryService orderEntryService;
@@ -40,8 +37,6 @@ class OrderEntryServiceTest {
     @Test
     void updateOrderEntryStatusThenUpdateOrderStatus() {
         // Arrange
-        this.mockLogService();
-
         ObjectId orderId = new ObjectId("000000000000000000000000");
         ObjectId articleId = new ObjectId("000000000000000000000000");
         OrderStatus status = OrderStatus.READY_TO_DELIVER;
@@ -52,7 +47,7 @@ class OrderEntryServiceTest {
         OrderEntry orderEntry1 = new OrderEntry();
         orderEntry1.setArticleId(articleId);
         orderEntry1.setStatus(OrderStatus.ORDERED);
-        order.setEntries(Arrays.asList(orderEntry1));
+        order.setEntries(List.of(orderEntry1));
 
         doReturn(order).when(mongoService).getOrder(orderId);
         doReturn(true).when(mongoService).updateOrder(order);
@@ -74,8 +69,6 @@ class OrderEntryServiceTest {
     @Test
     void updateOrderEntryStatusDontUpdateOrderStatus() {
         // Arrange
-        this.mockLogService();
-
         ObjectId orderId = new ObjectId("000000000000000000000000");
         ObjectId articleId = new ObjectId("000000000000000000000000");
         OrderStatus status = OrderStatus.READY_TO_DELIVER;
@@ -111,8 +104,6 @@ class OrderEntryServiceTest {
     @Test
     void updateOrderEntryStatusNoSuchArticle() {
         // Arrange
-        this.mockLogService();
-
         ObjectId mockOrderId = new ObjectId("000000000000000000000000");
         ObjectId mockArticleId = new ObjectId("000000000000000000000000");
         OrderStatus mockOrderStatus = OrderStatus.ORDERED;
@@ -123,7 +114,7 @@ class OrderEntryServiceTest {
         OrderEntry orderEntry1 = new OrderEntry();
         orderEntry1.setArticleId(mockArticleId);
         orderEntry1.setStatus(mockArticleStatus);
-        mockOrder.setEntries(Arrays.asList(orderEntry1));
+        mockOrder.setEntries(List.of(orderEntry1));
 
         doReturn(mockOrder).when(mongoService).getOrder(mockOrderId);
         doReturn(true).when(mongoService).updateOrder(mockOrder);
@@ -144,8 +135,4 @@ class OrderEntryServiceTest {
         verify(logService, times(1)).error(String.format("could not find article with id %s in order with id %s", articleId, orderId));
     }
 
-    private void mockLogService() {
-        doReturn(this.log).when(logService).info(anyString(), any());
-        doNothing().when(this.log).send();
-    }
 }
