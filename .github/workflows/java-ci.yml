@@ -27,3 +27,28 @@ jobs:
           distribution: 'temurin'
       - name: Test with Maven
         run: mvn test
+
+  deploy-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+
+      - name: Install AsciiDoctor
+        run: gem install asciidoctor
+
+      - name: Build AsciiDoc Files
+        run: asciidoctor -b html5 -D src/docs/pages src/docs/asciidoc/index.adoc
+
+      - name: Commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add docs/*
+          git commit -m "Deploy AsciiDoc to GitHub Pages" -a
+      - name: Push changes
+        uses: ad-m/github-push-action@master
