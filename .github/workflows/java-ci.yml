@@ -28,7 +28,7 @@ jobs:
       - name: Test with Maven
         run: mvn test
 
-  deploy-docs:
+  build-docs:
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -45,11 +45,21 @@ jobs:
       - name: Build AsciiDoc Files
         run: asciidoctor -b html5 -D src/docs/pages src/docs/asciidoc/index.adoc
 
-      - name: Commit files
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add src/docs/pages/*
-          git commit -m "Deploy AsciiDoc to GitHub Pages" -a
-      - name: Push changes
-        uses: ad-m/github-push-action@master
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: src/docs/pages
+
+  deploy-docs:
+    needs: build-docs
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
