@@ -45,10 +45,10 @@ jobs:
           ruby-version: '3.0'
 
       - name: Install AsciiDoctor
-        run: gem install asciidoctor
+        run: gem install asciidoctor asciidoctor-diagram
 
       - name: Build AsciiDoc Files
-        run: asciidoctor -b html5 -D src/docs/pages src/docs/asciidoc/index.adoc
+        run: asciidoctor -b html5 -r asciidoctor-diagram -D src/docs/pages src/docs/asciidoc/index.adoc
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
