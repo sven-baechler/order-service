@@ -119,3 +119,44 @@ This queue is used to retrieve a list of all existing orders. An empty JSON is s
   }
 ]
 ----
+
+== UML Class Diagram
+The following diagram illustrates the main domain objects in the "Order-Service".
+
+[plantuml, uml-diagram, png, width=800]
+----
+@startuml
+skinparam classAttributeIconSize 0
+
+class Order {
+    + Id
+    + BranchOfficeId
+    + SellerId
+    + CustomerId
+    + Status
+    + Datetime
+}
+
+class OrderEntry {
+    + Id
+    + OrderId
+    + AssortmentEntryId
+    + Amount
+    + Status
+    + PricePerUnit
+}
+
+class Customer {
+    + Id
+    + Name
+    + Prename
+    + Zip
+    + City
+    + Street
+}
+
+Order "1 " -- "0..n" OrderEntry
+Order "1" -- " 1 " Customer
+
+@enduml
+----
