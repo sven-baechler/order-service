@@ -1,40 +1,121 @@
-= Dokumentation Beispiel
-Vorname, Name <vorname.name@hslu.ch>
-V0.0.1, 2023-09-07
+= Order-Service
 :imagesdir: ./images
 :toc:
-:toc-title: Inhaltsverzeichnis
+:toc-title: Table of Contents
 :toclevels: 1
 
-== Einführung
-Sie haben die Möglichkeit eine Dokumentation mit https://asciidoc.org/ zu schreiben.
-Diese wird in HTML5 aufbereitet, oder steht auch als link:index.pdf[PDF] zur Verfügung.
+== Introduction
+The Java project "Order-Service" was developed as part of the "Software Development and Architecture" module at HSLU. The module "Software Architecture and Techniques" focuses on enhancing code quality, maintainability, stability, and other key aspects. To apply the concepts learned in the lectures, the existing Java project "Order-Service" was utilized as a refactoring project.
 
-== Kapitel 1: Titel
-Beispiel für ein Kapitel.
+== System Context
+The "Order-Service" is a microservice and is part of a "Filial-System". This service is responsible for managing the orders. This application subscribes to RabbitMQ queues, to which other services can send messages, and will be processed by the "Order-Service". More information about which queues this service can process are documented under the section API.
 
-== Kapitel 2: tbd
-tbd
+== API Documentation
+The Application Programming Interface (API) in the Order-Service is implemented using RabbitMQ. RabbitMQ is an open-source message broker software that facilitates communication between different services and applications by sending and receiving messages through queues. The "Order-Service" provides different queues, which require different request JSON formats.
 
-== Appendix: Beispiele
-Mann kann ganz einfach Bilder integrieren:
+=== Order Create Queue
+Queue name: `order.created`
 
-image::HSLU-Logo-21-klein.png[]
+This queue receives messages to create new orders. The interface is necessary to process and store orders from various points of sale centrally. The creation of a new order is performed asynchronously.
 
-Und wichtige Textstellen mit vierschiedenen Levels auszeichnen:
+==== Required JSON Format
 
-WARNING: Das ist eine Warnung!
+[source,json]
+----
+{
+  "order": {
+    "branchOfficeId": "5fc3aadb5b21bb774678adab",
+    "sellerId": "5fc3aadb5b21bb774678adac",
+    "customer": {
+      "id": "5fc3aadb5b21bb774678adad",
+      "name": "",
+      "preName": "",
+      "street": "",
+      "zip": "",
+      "city": ""
+    },
+    "datetime": null,
+    "status": null,
+    "entries": [
+      {
+        "articleId": "5fc3aadb5b21bb774678adae",
+        "articleName": "",
+        "amount": 0,
+        "pricePerUnit": 0
+      }
+    ]
+  }
+}
+----
 
-TIP: Das ist ein Tipp!
+=== Article Stock Updated
+Queue name: `article.stock_updated`
 
-IMPORTANT: Das ist wichtig!
+This queue can be used when new articles have arrived in the warehouse. The added articles are searched for in all orders to check if they can now be delivered. If this is the case, the status of the article is updated accordingly. The execution is performed asynchronously.
 
-CAUTION: Achtung, das ist gefährlich!
+Request JSON:
+[source,json]
+----
+{
+  "articleId": "12345",
+  "amount": 10
+}
+----
 
-NOTE: Das ist ein kleiner Hinweis.
+=== Order-Item Update Status
+Queue name: `order.item_update_status`
 
-Und man kann auch zitieren:
+This queue updates the status of an item in an order. Subsequently, the entire order is checked. If all items are in the status "READY_TO_DELIVER", the overall order status can be updated to READY_TO_DELIVER. The process is done asynchronously.
 
-[quote,Albert Einstein]
-Ein Mensch der keine Fehler macht, hat nie etwas neues ausprobiert.
+Request JSON:
+[source,json]
+----
+{
+  "orderId": "1234",
+  "articleId": "1234",
+  "status": "READY_TO_DELIVER"
+}
+----
 
+=== Order List Requested Queue
+Queue name: `order.list_requested`
+
+This queue is used to retrieve a list of all existing orders. An empty JSON is sent, as no specific parameters are required for the request. The response contains a list of orders in JSON format, where each order includes information such as ID, branch office ID, seller ID, customer, date, status, and entries. The request is processed synchronously and directly returns a response.
+
+==== Example of an Incoming Message
+
+[source,json]
+----
+{}
+----
+
+==== Example of a Response
+
+[source,json]
+----
+[
+  {
+    "id": "5fc3aadb5b21bb774678adab",
+    "branchOfficeId": "5fc3aadb5b21bb774678adac",
+    "sellerId": "5fc3aadb5b21bb774678adad",
+    "customer": {
+      "id": "5fc3aadb5b21bb774678adae",
+      "name": "Max Mustermann",
+      "preName": "Max",
+      "street": "Musterstraße 1",
+      "zip": "12345",
+      "city": "Musterstadt"
+    },
+    "datetime": "2020-11-29T12:00:00Z",
+    "status": "PENDING",
+    "entries": [
+      {
+        "articleId": "5fc3aadb5b21bb774678adaf",
+        "articleName": "Artikel XYZ",
+        "amount": 10,
+        "pricePerUnit": 19.99
+      }
+    ]
+  }
+]
+----
