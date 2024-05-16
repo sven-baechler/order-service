@@ -45,7 +45,9 @@ jobs:
           ruby-version: '3.0'
 
       - name: Install AsciiDoctor
-        run: gem install asciidoctor asciidoctor-diagram
+        run: |
+          gem install asciidoctor asciidoctor-diagram
+          sudo apt-get install -y graphviz
 
       - name: Build AsciiDoc Files
         run: asciidoctor -b html5 -r asciidoctor-diagram -D src/docs/pages src/docs/asciidoc/index.adoc
