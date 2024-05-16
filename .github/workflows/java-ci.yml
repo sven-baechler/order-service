@@ -5,6 +5,7 @@ on: [push]
 permissions:
   id-token: write
   contents: read
+  pages: write
 
 jobs:
   build:
