@@ -1,13 +1,7 @@
-# order-service
-Projekt im Modul Software Architecture and Techniques (SWAT).
+# Order-Service
 
-## Beschreibung Setup
-TODO
+The "Order-Service" project is hosted on GitHub.
 
-## Analyse Code - Erkenntnis Testbarkeit
-In den Receivern wird unter anderem der MongoClient direkt in den zu testenden Methoden instanziert.
-Durch diese Architektur lässt sich der Client nicht mocken und es muss ein Refactoring vorgenommen werden.
+With each push, automated tests are run and the documentation is generated using GitHub Actions.
 
-## TODO
-* exchange "swda" automatisch erstellen bei `docker-compose -f stack.local.yml up`
-* UML-Klassendiagramm
+For more information, check out the documentation at [Order-Service Documentation](https://sven-baechler.github.io/order-service/).
